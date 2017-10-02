@@ -1,0 +1,514 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "the purpose of this application is to provide an application\nthat is using plain go code to define an API\n\nThis should demonstrate all the possible comment annotations\nthat are available to turn go code into a fully compliant swagger 2.0 spec",
+    "title": "Petstore API.",
+    "termsOfService": "there are no TOS at this moment, use at your own risk we take no responsibility",
+    "contact": {
+      "name": "John Doe",
+      "url": "http://john.doe.com",
+      "email": "john.doe@example.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    },
+    "version": "0.0.1"
+  },
+  "host": "localhost:8080",
+  "basePath": "/v2",
+  "paths": {
+    "/orders": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Creates an order.",
+        "operationId": "createOrder",
+        "parameters": [
+          {
+            "x-go-name": "Order",
+            "description": "The order to submit",
+            "name": "order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/order"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/orderResponse"
+          },
+          "422": {
+            "$ref": "#/responses/validationError"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Gets the details for an order.",
+        "operationId": "getOrderDetails",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The ID of the order",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/orderResponse"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Updates an order.",
+        "operationId": "updateOrder",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The ID of the order",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-go-name": "Order",
+            "description": "The order to submit",
+            "name": "order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/order"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "order",
+            "schema": {
+              "$ref": "#/definitions/order"
+            }
+          },
+          "422": {
+            "$ref": "#/responses/validationError"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Deletes an order.",
+        "operationId": "cancelOrder",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The ID of the order",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      }
+    },
+    "/pets": {
+      "get": {
+        "description": "By default it will only lists pets that are available for sale.\nThis can be changed with the status flag.",
+        "tags": [
+          "pets"
+        ],
+        "summary": "Lists the pets known to the store.",
+        "operationId": "listPets",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "Status",
+            "description": "Status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "x-go-name": "Birthday",
+            "description": "Birthday",
+            "name": "birthday",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "pet",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/pet"
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Creates a new pet in the store.",
+        "operationId": "createPet",
+        "parameters": [
+          {
+            "x-go-name": "Pet",
+            "description": "The pet to submit.",
+            "name": "pet",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "pet",
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          },
+          "422": {
+            "$ref": "#/responses/validationError"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      }
+    },
+    "/pets/{id}": {
+      "get": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Gets the details for a pet.",
+        "operationId": "getPetById",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The ID of the pet",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "pet",
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Updates the details for a pet.",
+        "operationId": "updatePet",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The ID of the pet",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-go-name": "Pet",
+            "description": "The pet to submit.",
+            "name": "pet",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "pet",
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          },
+          "422": {
+            "$ref": "#/responses/validationError"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Deletes a pet from the store.",
+        "operationId": "deletePet",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The ID of the pet",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "order": {
+      "type": "object",
+      "title": "An Order for one or more pets by a user.",
+      "required": [
+        "id",
+        "userId",
+        "orderedAt"
+      ],
+      "properties": {
+        "id": {
+          "description": "the ID of the order",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "items": {
+          "description": "the items for this order\nmininum items: 1",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "petId",
+              "qty"
+            ],
+            "properties": {
+              "petId": {
+                "description": "the id of the pet to order",
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "PetID"
+              },
+              "qty": {
+                "description": "the quantity of this pet to order",
+                "type": "integer",
+                "format": "int32",
+                "minimum": 1,
+                "x-go-name": "Quantity"
+              }
+            }
+          },
+          "x-go-name": "Items"
+        },
+        "orderedAt": {
+          "description": "the time at which this order was made.",
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "OrderedAt"
+        },
+        "userId": {
+          "description": "the id of the user who placed the order.",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UserID"
+        }
+      },
+      "x-go-name": "Order",
+      "x-go-package": "github.com/go-swagger/go-swagger/fixtures/goparsing/petstore/models"
+    },
+    "pet": {
+      "description": "It is used to describe the animals available in the store.",
+      "type": "object",
+      "title": "A Pet is the main product in the store.",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "birthday": {
+          "description": "The pet's birthday",
+          "type": "string",
+          "format": "date",
+          "x-go-name": "Birthday"
+        },
+        "id": {
+          "description": "The id of the pet.",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "description": "The name of the pet.",
+          "type": "string",
+          "maxLength": 50,
+          "minLength": 3,
+          "pattern": "\\w[\\w-]+",
+          "x-go-name": "Name"
+        },
+        "photoUrls": {
+          "description": "The photo urls for the pet.\nThis only accepts jpeg or png images.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\.(jpe?g|png)$"
+          },
+          "x-go-name": "PhotoURLs"
+        },
+        "status": {
+          "description": "The current status of the pet in the store.",
+          "type": "string",
+          "x-go-name": "Status"
+        },
+        "tags": {
+          "description": "Extra bits of information attached to this pet.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tag"
+          },
+          "x-go-name": "Tags"
+        }
+      },
+      "x-go-name": "Pet",
+      "x-go-package": "github.com/go-swagger/go-swagger/fixtures/goparsing/petstore/models"
+    },
+    "tag": {
+      "description": "It is used to describe the animals available in the store.",
+      "type": "object",
+      "title": "A Tag is an extra piece of data to provide more information about a pet.",
+      "required": [
+        "id",
+        "value"
+      ],
+      "properties": {
+        "id": {
+          "description": "The id of the tag.",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "value": {
+          "description": "The value of the tag.",
+          "type": "string",
+          "x-go-name": "Value"
+        }
+      },
+      "x-go-name": "Tag",
+      "x-go-package": "github.com/go-swagger/go-swagger/fixtures/goparsing/petstore/models"
+    }
+  },
+  "responses": {
+    "genericError": {
+      "description": "A GenericError is the default error message that is generated.\nFor certain status codes there are more appropriate error structures.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "x-go-name": "Code"
+          },
+          "message": {
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "orderResponse": {
+      "description": "An OrderResponse response model\n\nThis is used for returning a response with a single order as body",
+      "schema": {
+        "$ref": "#/definitions/order"
+      }
+    },
+    "validationError": {
+      "description": "A ValidationError is an that is generated for validation failures.\nIt has the same fields as a generic error but adds a Field property.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "x-go-name": "Code"
+          },
+          "field": {
+            "type": "string",
+            "x-go-name": "Field"
+          },
+          "message": {
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    }
+  }
+}

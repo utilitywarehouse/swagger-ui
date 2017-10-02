@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/utilitywarehouse/swagger-ui
+    docker:
+    - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - run: git config --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+      - run: make install
+      - run: make lint test
+
+
