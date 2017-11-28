@@ -24,10 +24,25 @@ const (
 )
 
 // Handler returns an HTTP handler that serves the
-// swagger-ui under /third_party/swagger-ui.
+// swagger-ui under /swagger-ui/
 func Handler() http.Handler {
-	data := swaggerFile()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", redirect)
+	mux.Handle(basePath, UIHandler())
+	mux.Handle(specFile, FileHandler())
+	return mux
+}
 
+// FileHandler returns an HTTP handler that serves the
+// swagger.json file
+func FileHandler() http.Handler {
+	data := swaggerFile()
+	return &handler{modTime: time.Now(), body: data}
+}
+
+// UIHandler returns an HTTP handler that serves the
+// swagger UI
+func UIHandler() http.Handler {
 	as := &assetfs.AssetStore{
 		Names: internal.AssetNames,
 		Data:  internal.Asset,
@@ -37,11 +52,7 @@ func Handler() http.Handler {
 	if err != nil {
 		panic(fmt.Sprintf("failed to create static fs: %v", err))
 	}
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", redirect)
-	mux.Handle(basePath, http.FileServer(http.FileSystem(fs)))
-	mux.Handle(specFile, &handler{modTime: time.Now(), body: data})
-	return mux
+	return http.FileServer(http.FileSystem(fs))
 }
 
 type handler struct {
