@@ -1,6 +1,6 @@
 # Swagger UI
 
-`go get github.com/utilitywarehouse/swagger-ui`
+`go get github.com/utilitywarehouse/swagger-ui/swaggerui`
 
 swaggerui returns a handler with 3 routes
 
