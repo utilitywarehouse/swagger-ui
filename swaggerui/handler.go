@@ -84,12 +84,18 @@ func swaggerFile() io.ReadSeeker {
 		if tmpErr != nil {
 			log.Println("swagger.json not found in /tmp/swagger.json")
 			swaggerPath = "../swagger.json"
-			_, osErr := os.Stat(swaggerPath)
-			if osErr != nil {
-				panic("Can not find swagger.json file")
+			_, parentErr := os.Stat(swaggerPath)
+			if parentErr != nil {
+				log.Println("swagger.json not found in ../swagger.json")
+				swaggerPath = os.Getenv("SWAGGER_JSON_PATH")
+				_, envErr := os.Stat(swaggerPath)
+				if envErr != nil {
+					panic("Can not find swagger.json file")
+				}
 			}
 		}
 	}
+
 	fi, err := os.Open(swaggerPath)
 	if err != nil {
 		panic(fmt.Sprintf("unable to open swagger.json: %v", err))
