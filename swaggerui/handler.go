@@ -1,18 +1,8 @@
-//go:generate sh -c "go-bindata -pkg=internal -o internal/files.go `find swagger-ui -type d`"
-
 package swaggerui
 
 import (
-	"fmt"
-	"io"
-	"log"
+	newswaggerui "github.com/utilitywarehouse/swaggerui"
 	"net/http"
-	"os"
-	"path/filepath"
-	"time"
-
-	"github.com/utilitywarehouse/swagger-ui/assetfs"
-	"github.com/utilitywarehouse/swagger-ui/swaggerui/internal"
 )
 
 const (
@@ -35,70 +25,18 @@ func Handler() http.Handler {
 
 // FileHandler returns an HTTP handler that serves the
 // swagger.json file
+// Deprecated: https://github.com/utilitywarehouse/swaggerui/blob/55a2f44cd9d9ae0d237f99e111eda1059614c4d8/handler.go#L21
 func FileHandler() http.Handler {
-	data := swaggerFile()
-	return &handler{modTime: time.Now(), body: data}
+	return newswaggerui.SwaggerFile()
 }
 
 // UIHandler returns an HTTP handler that serves the
 // swagger UI
+// Deprecated: https://github.com/utilitywarehouse/swaggerui/blob/55a2f44cd9d9ae0d237f99e111eda1059614c4d8/handler.go#L12
 func UIHandler() http.Handler {
-	as := &assetfs.AssetStore{
-		Names: internal.AssetNames,
-		Data:  internal.Asset,
-		Info:  internal.AssetInfo,
-	}
-	fs, err := assetfs.New(as)
-	if err != nil {
-		panic(fmt.Sprintf("failed to create static fs: %v", err))
-	}
-	return http.FileServer(http.FileSystem(fs))
-}
-
-type handler struct {
-	modTime time.Time
-	body    io.ReadSeeker
-}
-
-func (f *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	http.ServeContent(w, r, specFile, f.modTime, f.body)
+	return http.StripPrefix("/swagger-ui/", newswaggerui.SwaggerUI())
 }
 
 func redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, basePath, http.StatusSeeOther)
-}
-
-func swaggerFile() io.ReadSeeker {
-	e, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-
-	d := filepath.Dir(e)
-	swaggerPath := fmt.Sprintf("%v/swagger.json", d)
-	_, err = os.Stat(swaggerPath)
-	if err != nil {
-		log.Println("swagger.json not found in project root:", swaggerPath)
-		swaggerPath = "/tmp/swagger.json"
-		_, tmpErr := os.Stat(swaggerPath)
-		if tmpErr != nil {
-			log.Println("swagger.json not found in /tmp/swagger.json")
-			swaggerPath = "../swagger.json"
-			_, parentErr := os.Stat(swaggerPath)
-			if parentErr != nil {
-				log.Println("swagger.json not found in ../swagger.json")
-				swaggerPath = os.Getenv("SWAGGER_JSON_PATH")
-				_, envErr := os.Stat(swaggerPath)
-				if envErr != nil {
-					panic("Can not find swagger.json file")
-				}
-			}
-		}
-	}
-
-	fi, err := os.Open(swaggerPath)
-	if err != nil {
-		panic(fmt.Sprintf("unable to open swagger.json: %v", err))
-	}
-	return fi
 }

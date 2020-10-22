@@ -1,4 +1,8 @@
 # Swagger UI
+## Deprecated
+This library has been superseded by [github.com/utilitywarehouse/swaggerui](https://github.com/utilitywarehouse/swaggerui)
+
+## Usage
 
 `go get github.com/utilitywarehouse/swagger-ui/swaggerui`
 

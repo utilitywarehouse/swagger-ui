@@ -63,7 +63,9 @@ build: $(SERVICE)
 
 .PHONY: test
 test:
+	@cp swagger.json /tmp/swagger.json
 	$(BUILDENV) go test $(TESTFLAGS) ./...
+	@rm /tmp/swagger.json
 
 docker-image:
 	docker build -t $(DOCKER_REPOSITORY):local . --build-arg SERVICE=$(SERVICE) --build-arg GITHUB_TOKEN=$(GITHUB_TOKEN)
